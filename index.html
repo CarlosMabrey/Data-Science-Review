@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DataSci MasterClass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    
+    <!-- Marked.js for Markdown Parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- KaTeX for Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: 'var(--background)',
+              surface: 'var(--surface)',
+              surfaceHighlight: 'var(--surface-highlight)',
+              border: 'var(--border)',
+              text: {
+                main: 'var(--text-main)',
+                muted: 'var(--text-muted)',
+                inverted: 'var(--text-inverted)',
+              },
+              accent: {
+                DEFAULT: 'var(--accent)',
+                hover: 'var(--accent-hover)',
+                dim: 'var(--accent-dim)',
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      :root {
+        /* Default Theme (Deep Space) */
+        --background: #020617; /* slate-950 */
+        --surface: #0f172a; /* slate-900 */
+        --surface-highlight: #1e293b; /* slate-800 */
+        --border: #1e293b; /* slate-800 */
+        --text-main: #f1f5f9; /* slate-100 */
+        --text-muted: #94a3b8; /* slate-400 */
+        --text-inverted: #020617; 
+        --accent: #3b82f6; /* blue-500 */
+        --accent-hover: #2563eb; /* blue-600 */
+        --accent-dim: rgba(59, 130, 246, 0.1);
+      }
+
+      [data-theme='cyberpunk'] {
+        --background: #09090b; /* zinc-950 */
+        --surface: #18181b; /* zinc-900 */
+        --surface-highlight: #27272a; /* zinc-800 */
+        --border: #3f3f46; /* zinc-700 */
+        --text-main: #e4e4e7; /* zinc-200 */
+        --text-muted: #a1a1aa; /* zinc-400 */
+        --text-inverted: #000000;
+        --accent: #d946ef; /* fuchsia-500 */
+        --accent-hover: #c026d3; /* fuchsia-600 */
+        --accent-dim: rgba(217, 70, 239, 0.15);
+      }
+
+      [data-theme='ocean'] {
+        --background: #0f172a; /* slate-900 */
+        --surface: #1e293b; /* slate-800 */
+        --surface-highlight: #334155; /* slate-700 */
+        --border: #334155;
+        --text-main: #f8fafc; 
+        --text-muted: #cbd5e1;
+        --text-inverted: #0f172a;
+        --accent: #14b8a6; /* teal-500 */
+        --accent-hover: #0d9488; /* teal-600 */
+        --accent-dim: rgba(20, 184, 166, 0.15);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-track { background: var(--background); }
+      ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+      /* KaTeX adjustments */
+      .katex { font-size: 1.1em; color: var(--text-main); }
+      .katex-display { overflow-x: auto; overflow-y: hidden; padding: 1rem 0; }
+
+      /* 3D Utilities for Flashcards */
+      .perspective-1000 { perspective: 1000px; }
+      .transform-style-3d { transform-style: preserve-3d; }
+      .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+      .rotate-y-180 { transform: rotateY(180deg); }
+    </style>
+
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.4.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24"
+  }
+}
+</script>
+</head>
+  <body class="bg-background text-text-main antialiased overflow-hidden">
+    <div id="root" class="h-screen w-screen"></div>
+  </body>
+</html>

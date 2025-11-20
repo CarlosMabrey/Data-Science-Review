@@ -1,0 +1,7 @@
+{
+  "name": "DataSci MasterClass",
+  "description": "An interactive educational platform for Senior Data Scientists and Engineers. Features deep-dive technical reviews, algorithm animations, and Gemini-powered explanations of Python, ML, and Statistics concepts.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
