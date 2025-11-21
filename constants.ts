@@ -109,7 +109,7 @@ export const INITIAL_TOPICS: Topic[] = [
     title: 'Logistic Regression',
     category: TopicCategory.ML,
     shortDesc: 'Probabilistic classification and decision boundaries.',
-    visualizationType: VisualizationType.NONE,
+    visualizationType: VisualizationType.LOGISTIC_REGRESSION,
   },
   {
     id: 'k-means',
@@ -123,21 +123,21 @@ export const INITIAL_TOPICS: Topic[] = [
     title: 'Random Forest & Boosting',
     category: TopicCategory.ML,
     shortDesc: 'Ensemble methods: Bagging vs. Boosting (XGBoost/LightGBM).',
-    visualizationType: VisualizationType.NONE,
+    visualizationType: VisualizationType.TREE_ENSEMBLES,
   },
   {
     id: 'gradient-descent',
     title: 'Gradient Descent',
     category: TopicCategory.ML,
     shortDesc: 'Optimization algorithm for minimizing the cost function.',
-    visualizationType: VisualizationType.NONE,
+    visualizationType: VisualizationType.GRADIENT_DESCENT,
   },
   {
     id: 'backprop',
     title: 'Backpropagation',
     category: TopicCategory.ML,
     shortDesc: 'The chain rule applied to neural network training.',
-    visualizationType: VisualizationType.NONE,
+    visualizationType: VisualizationType.BACKPROPAGATION,
   },
   {
     id: 'metrics',
@@ -151,7 +151,7 @@ export const INITIAL_TOPICS: Topic[] = [
     title: 'Overfitting & Regularization',
     category: TopicCategory.ML,
     shortDesc: 'L1 (Lasso), L2 (Ridge), Dropout, and Early Stopping.',
-    visualizationType: VisualizationType.NONE,
+    visualizationType: VisualizationType.REGULARIZATION,
   },
   {
     id: 'feature-eng',
@@ -165,14 +165,14 @@ export const INITIAL_TOPICS: Topic[] = [
     title: 'Principal Component Analysis',
     category: TopicCategory.ML,
     shortDesc: 'Dimensionality reduction via eigendecomposition.',
-    visualizationType: VisualizationType.NONE,
+    visualizationType: VisualizationType.PCA,
   },
   {
     id: 'svm',
     title: 'Support Vector Machines',
     category: TopicCategory.ML,
     shortDesc: 'Finding the optimal hyperplane for classification.',
-    visualizationType: VisualizationType.NONE,
+    visualizationType: VisualizationType.SVM,
   },
   {
     id: 'cv-split',
@@ -195,7 +195,7 @@ export const INITIAL_TOPICS: Topic[] = [
     title: 'Bayesian Inference',
     category: TopicCategory.STATS,
     shortDesc: 'Updating probabilities as new evidence becomes available.',
-    visualizationType: VisualizationType.NONE,
+    visualizationType: VisualizationType.BAYESIAN,
   },
   {
     id: 'p-value',
@@ -209,14 +209,14 @@ export const INITIAL_TOPICS: Topic[] = [
     title: 'Bias-Variance Tradeoff',
     category: TopicCategory.STATS,
     shortDesc: 'Balancing model complexity and generalization error.',
-    visualizationType: VisualizationType.NONE,
+    visualizationType: VisualizationType.BIAS_VARIANCE,
   },
   {
     id: 'distributions',
     title: 'Probability Distributions',
     category: TopicCategory.STATS,
     shortDesc: 'Binomial, Poisson, Exponential and their applications.',
-    visualizationType: VisualizationType.NONE,
+    visualizationType: VisualizationType.PROB_DISTRIBUTIONS,
   },
 
   // --- PYTHON ---

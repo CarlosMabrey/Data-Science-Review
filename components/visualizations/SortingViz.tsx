@@ -1,15 +1,40 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BarChart, Bar, Cell, ResponsiveContainer, XAxis, YAxis } from 'recharts';
-import { Play, RefreshCw, Settings } from 'lucide-react';
+import { BarChart, Bar, Cell, ResponsiveContainer } from 'recharts';
+import { Play, RefreshCw, Info } from 'lucide-react';
 
 type Algorithm = 'BUBBLE' | 'SELECTION' | 'INSERTION' | 'QUICK' | 'MERGE';
 
-const ALGO_INFO: Record<Algorithm, { name: string; complexity: string; desc: string }> = {
-  BUBBLE: { name: 'Bubble Sort', complexity: 'O(n²)', desc: 'Repeatedly swaps adjacent elements if they are in the wrong order.' },
-  SELECTION: { name: 'Selection Sort', complexity: 'O(n²)', desc: 'Repeatedly finds the minimum element and moves it to the beginning.' },
-  INSERTION: { name: 'Insertion Sort', complexity: 'O(n²)', desc: 'Builds the sorted array one item at a time.' },
-  QUICK: { name: 'Quick Sort', complexity: 'O(n log n)', desc: 'Divides array into partitions around a pivot.' },
-  MERGE: { name: 'Merge Sort', complexity: 'O(n log n)', desc: 'Recursively halves the array and merges sorted halves.' },
+const ALGO_INFO: Record<Algorithm, { name: string; complexity: string; desc: string; detail: string }> = {
+  BUBBLE: { 
+    name: 'Bubble Sort', 
+    complexity: 'O(n²)', 
+    desc: 'Repeatedly swaps adjacent elements if they are in the wrong order.',
+    detail: 'The algorithm steps through the list, compares adjacent elements and swaps them if they are in the wrong order. The pass through the list is repeated until the list is sorted. With each pass, the largest unsorted element "bubbles" to its correct position at the end of the array.'
+  },
+  SELECTION: { 
+    name: 'Selection Sort', 
+    complexity: 'O(n²)', 
+    desc: 'Repeatedly finds the minimum element and moves it to the beginning.',
+    detail: 'The list is divided into two parts: the sublist of items already sorted (left) and the sublist of items remaining to be sorted (right). In each iteration, it finds the smallest element (highlighted purple) in the unsorted sublist and swaps it with the leftmost unsorted element.'
+  },
+  INSERTION: { 
+    name: 'Insertion Sort', 
+    complexity: 'O(n²)', 
+    desc: 'Builds the sorted array one item at a time by shifting elements.',
+    detail: 'It works like sorting playing cards in your hands. The array is virtually split into a sorted and an unsorted part. Values from the unsorted part are picked and placed at the correct position in the sorted part by shifting larger elements to the right.'
+  },
+  QUICK: { 
+    name: 'Quick Sort', 
+    complexity: 'O(n log n)', 
+    desc: 'Divides array into partitions around a pivot element.',
+    detail: 'It picks a "pivot" element (highlighted purple) and partitions the array so all smaller elements come before the pivot and all larger elements come after. The pivot is then in its final sorted position. The process is recursively applied to the sub-arrays.'
+  },
+  MERGE: { 
+    name: 'Merge Sort', 
+    complexity: 'O(n log n)', 
+    desc: 'Recursively halves the array and merges sorted halves.',
+    detail: 'A divide-and-conquer algorithm that divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves. The visualization shows the merging process overwriting the original array values at the write index (red).'
+  },
 };
 
 export const SortingViz: React.FC = () => {
@@ -19,6 +44,7 @@ export const SortingViz: React.FC = () => {
   const [compareIndices, setCompareIndices] = useState<number[]>([]);
   const [swapIndices, setSwapIndices] = useState<number[]>([]);
   const [sortedIndices, setSortedIndices] = useState<number[]>([]);
+  const [specialIndices, setSpecialIndices] = useState<number[]>([]); // For Pivot or Min
   
   // Refs for async control
   const sortingRef = useRef(false);
@@ -38,6 +64,7 @@ export const SortingViz: React.FC = () => {
         setCompareIndices([]);
         setSwapIndices([]);
         setSortedIndices([]);
+        setSpecialIndices([]);
         stopRef.current = false;
         sortingRef.current = false;
     }, 100);
@@ -51,6 +78,7 @@ export const SortingViz: React.FC = () => {
     sortingRef.current = true;
     stopRef.current = false;
     setSortedIndices([]);
+    setSpecialIndices([]);
 
     const arr = [...array];
 
@@ -64,6 +92,7 @@ export const SortingViz: React.FC = () => {
         }
         if (!stopRef.current) {
              setSortedIndices(arr.map((_, i) => i));
+             setSpecialIndices([]);
         }
     } catch (e) {
         // Stopped
@@ -73,6 +102,7 @@ export const SortingViz: React.FC = () => {
     sortingRef.current = false;
     setCompareIndices([]);
     setSwapIndices([]);
+    setSpecialIndices([]);
   };
 
   // --- Algorithms ---
@@ -104,14 +134,20 @@ export const SortingViz: React.FC = () => {
       for (let i = 0; i < n; i++) {
           if (stopRef.current) return;
           let minIdx = i;
+          setSpecialIndices([minIdx]); // Highlight current min candidate
+          
           for (let j = i + 1; j < n; j++) {
               if (stopRef.current) return;
-              setCompareIndices([minIdx, j]);
+              setCompareIndices([j]); // Scan
               await delay(20);
+              
               if (arr[j] < arr[minIdx]) {
                   minIdx = j;
+                  setSpecialIndices([minIdx]); // New min found
+                  await delay(20);
               }
           }
+          
           if (minIdx !== i) {
               setSwapIndices([i, minIdx]);
               [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
@@ -125,27 +161,33 @@ export const SortingViz: React.FC = () => {
 
   const insertionSort = async (arr: number[]) => {
       const n = arr.length;
-      setSortedIndices([0]); // First element is trivially sorted
+      setSortedIndices([0]); 
       for (let i = 1; i < n; i++) {
           if (stopRef.current) return;
           let key = arr[i];
           let j = i - 1;
-          setCompareIndices([i, j]);
+          
+          setSpecialIndices([i]); // Element being inserted
           
           while (j >= 0 && arr[j] > key) {
               if (stopRef.current) return;
-              setSwapIndices([j, j + 1]); // Visualizing the shift
+              setCompareIndices([j]);
+              await delay(20);
+
+              setSwapIndices([j, j + 1]); // Shift visual
               arr[j + 1] = arr[j];
               setArray([...arr]);
               await delay(30);
               j = j - 1;
-              if (j >= 0) setCompareIndices([i, j]);
           }
           arr[j + 1] = key;
           setArray([...arr]);
+          setSwapIndices([j + 1]); // Place key
+          await delay(30);
+          
           setSwapIndices([]);
           setCompareIndices([]);
-          // Update sorted range
+          setSpecialIndices([]);
           setSortedIndices(Array.from({length: i + 1}, (_, k) => k));
       }
   };
@@ -155,21 +197,23 @@ export const SortingViz: React.FC = () => {
           if (stopRef.current) return;
           const pi = await partition(arr, low, high);
           
-          // Mark pivot as sorted roughly for viz
-          setSortedIndices(prev => [...prev, pi]);
+          setSortedIndices(prev => [...prev, pi]); // Pivot is sorted
 
           await quickSort(arr, low, pi - 1);
           await quickSort(arr, pi + 1, high);
+      } else if (low === high) {
+          setSortedIndices(prev => [...prev, low]);
       }
   };
 
   const partition = async (arr: number[], low: number, high: number) => {
       const pivot = arr[high];
+      setSpecialIndices([high]); // Highlight Pivot
       let i = (low - 1);
       
       for (let j = low; j <= high - 1; j++) {
           if (stopRef.current) return -1;
-          setCompareIndices([j, high]);
+          setCompareIndices([j]);
           await delay(20);
           
           if (arr[j] < pivot) {
@@ -177,15 +221,16 @@ export const SortingViz: React.FC = () => {
               setSwapIndices([i, j]);
               [arr[i], arr[j]] = [arr[j], arr[i]];
               setArray([...arr]);
-              await delay(20);
+              await delay(30);
               setSwapIndices([]);
           }
       }
       setSwapIndices([i + 1, high]);
       [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
       setArray([...arr]);
-      await delay(20);
+      await delay(30);
       setSwapIndices([]);
+      setSpecialIndices([]); // Clear pivot highlight for this level
       return (i + 1);
   };
 
@@ -210,9 +255,12 @@ export const SortingViz: React.FC = () => {
 
       let i = 0, j = 0, k = l;
 
+      setSpecialIndices([]);
+
       while (i < n1 && j < n2) {
           if (stopRef.current) return;
-          setCompareIndices([l + i, m + 1 + j]); // Relative indices in original array
+          
+          setCompareIndices([k]); // Highlight position being determined
           await delay(30);
 
           if (L[i] <= R[j]) {
@@ -222,10 +270,9 @@ export const SortingViz: React.FC = () => {
               arr[k] = R[j];
               j++;
           }
-          setArray([...arr]); // Update visual
-          // For merge sort, swap indices are not exactly swaps, but overwrites. 
-          // We highlight the write index.
-          setSwapIndices([k]); 
+          setArray([...arr]); 
+          setSwapIndices([k]); // Show write
+          await delay(20);
           k++;
       }
 
@@ -257,6 +304,7 @@ export const SortingViz: React.FC = () => {
 
   const getBarColor = (index: number) => {
       if (sortedIndices.includes(index)) return '#22c55e'; // Green
+      if (specialIndices.includes(index)) return '#a855f7'; // Purple (Pivot/Min)
       if (swapIndices.includes(index)) return '#ef4444'; // Red
       if (compareIndices.includes(index)) return '#eab308'; // Yellow
       return '#60a5fa'; // Blue
@@ -296,10 +344,16 @@ export const SortingViz: React.FC = () => {
         </div>
       </div>
 
-      <div className="mb-2 px-1">
-          <div className="flex justify-between items-end text-xs text-slate-400">
-             <p>{ALGO_INFO[algorithm].desc}</p>
-             <span className="font-mono text-yellow-500 bg-yellow-500/10 px-2 py-0.5 rounded">Time: {ALGO_INFO[algorithm].complexity}</span>
+      <div className="bg-slate-950 p-3 rounded border border-slate-800 mb-4 text-xs text-slate-400 flex gap-3">
+          <div className="shrink-0 pt-0.5">
+              <Info size={16} className="text-blue-400"/>
+          </div>
+          <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-bold text-slate-200 uppercase tracking-wider">{ALGO_INFO[algorithm].name}</span>
+                <span className="font-mono text-yellow-500 bg-yellow-500/10 px-2 py-0.5 rounded text-[10px]">{ALGO_INFO[algorithm].complexity}</span>
+              </div>
+              <p className="leading-relaxed">{ALGO_INFO[algorithm].detail}</p>
           </div>
       </div>
 
@@ -320,7 +374,8 @@ export const SortingViz: React.FC = () => {
       
        <div className="mt-3 flex justify-center gap-4 text-[10px] uppercase tracking-wider text-slate-500 font-mono">
           <span className="flex items-center gap-1"><div className="w-2 h-2 bg-blue-400 rounded-full"></div> Unsorted</span>
-          <span className="flex items-center gap-1"><div className="w-2 h-2 bg-yellow-500 rounded-full"></div> Compare</span>
+          <span className="flex items-center gap-1"><div className="w-2 h-2 bg-purple-500 rounded-full" style={{backgroundColor: '#a855f7'}}></div> Pivot/Min</span>
+          <span className="flex items-center gap-1"><div className="w-2 h-2 bg-yellow-500 rounded-full" style={{backgroundColor: '#eab308'}}></div> Compare</span>
           <span className="flex items-center gap-1"><div className="w-2 h-2 bg-red-500 rounded-full"></div> Swap/Write</span>
           <span className="flex items-center gap-1"><div className="w-2 h-2 bg-green-500 rounded-full"></div> Sorted</span>
       </div>

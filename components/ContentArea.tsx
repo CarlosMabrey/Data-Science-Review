@@ -7,10 +7,23 @@ import { CodeBlock } from './CodeBlock';
 import { CodePlayground } from './CodePlayground';
 import { QuizModule } from './QuizModule';
 import { DeepDiveView } from './DeepDiveView';
+
+// Visualizations
 import { LinearRegressionVizFixed } from './visualizations/LinearRegressionViz';
 import { KMeansViz } from './visualizations/KMeansViz';
 import { NormalDistViz } from './visualizations/NormalDistViz';
 import { SortingViz } from './visualizations/SortingViz';
+import { LogisticRegressionViz } from './visualizations/LogisticRegressionViz';
+import { TreeEnsembleViz } from './visualizations/TreeEnsembleViz';
+import { GradientDescentViz } from './visualizations/GradientDescentViz';
+import { NeuralNetViz } from './visualizations/NeuralNetViz';
+import { RegularizationViz } from './visualizations/RegularizationViz';
+import { PCAViz } from './visualizations/PCAViz';
+import { SVMViz } from './visualizations/SVMViz';
+import { BayesianViz } from './visualizations/BayesianViz';
+import { BiasVarianceViz } from './visualizations/BiasVarianceViz';
+import { ProbabilityDistViz } from './visualizations/ProbabilityDistViz';
+
 import { Loader2, BrainCircuit, CheckCircle2, AlertCircle, Code, BookOpen, GraduationCap, Terminal, Layers, RotateCcw, Save, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeSwitcher } from './ThemeSwitcher';
@@ -73,9 +86,7 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
     
     // 1. Check for Pre-Generated Static Content (Instant Load)
     if (!forceRefresh && STATIC_CONTENT[topic.id]) {
-        // Even for static, ensure we are still on the same topic
         if (activeTopicIdRef.current !== currentRequestId) return;
-        
         setContent(STATIC_CONTENT[topic.id]);
         setSource('static');
         setLastSaved("Pre-generated (Goldmine)");
@@ -89,7 +100,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
       const cachedData = loadFromCache(topic.id);
       if (cachedData) {
         if (activeTopicIdRef.current !== currentRequestId) return;
-        
         setContent(cachedData);
         setSource('cache');
         setLastSaved(new Date(cachedData.timestamp || Date.now()).toLocaleTimeString());
@@ -106,7 +116,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
     try {
       const data = await fetchTopicExplanation(topic.title);
       
-      // CRITICAL: Check if the user has switched topics while we were fetching
       if (activeTopicIdRef.current !== currentRequestId) {
         console.log(`Ignored stale response for ${currentRequestId} (Current: ${activeTopicIdRef.current})`);
         return;
@@ -119,7 +128,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
     } catch (e) {
       console.error(e);
     } finally {
-      // Only turn off loading if we are still on the same topic
       if (activeTopicIdRef.current === currentRequestId) {
         setLoading(false);
       }
@@ -128,7 +136,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
 
   useEffect(() => {
     activeTopicIdRef.current = topic?.id || null;
-    // Immediately clear content when topic changes to prevent showing stale info
     setContent(null);
     loadContent(false);
   }, [topic]);
@@ -136,14 +143,20 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
   const renderVisualizer = () => {
     if (!topic) return null;
     switch (topic.visualizationType) {
-      case VisualizationType.LINEAR_REGRESSION:
-        return <LinearRegressionVizFixed />;
-      case VisualizationType.K_MEANS:
-        return <KMeansViz />;
-      case VisualizationType.NORMAL_DISTRIBUTION:
-        return <NormalDistViz />;
-      case VisualizationType.SORTING:
-        return <SortingViz />;
+      case VisualizationType.LINEAR_REGRESSION: return <LinearRegressionVizFixed />;
+      case VisualizationType.LOGISTIC_REGRESSION: return <LogisticRegressionViz />;
+      case VisualizationType.K_MEANS: return <KMeansViz />;
+      case VisualizationType.TREE_ENSEMBLES: return <TreeEnsembleViz />;
+      case VisualizationType.GRADIENT_DESCENT: return <GradientDescentViz />;
+      case VisualizationType.BACKPROPAGATION: return <NeuralNetViz />;
+      case VisualizationType.REGULARIZATION: return <RegularizationViz />;
+      case VisualizationType.PCA: return <PCAViz />;
+      case VisualizationType.SVM: return <SVMViz />;
+      case VisualizationType.BAYESIAN: return <BayesianViz />;
+      case VisualizationType.BIAS_VARIANCE: return <BiasVarianceViz />;
+      case VisualizationType.PROB_DISTRIBUTIONS: return <ProbabilityDistViz />;
+      case VisualizationType.NORMAL_DISTRIBUTION: return <NormalDistViz />;
+      case VisualizationType.SORTING: return <SortingViz />;
       default:
         return (
           <div className="h-full flex flex-col items-center justify-center text-text-muted bg-surface/50 rounded-lg border border-border border-dashed">
@@ -195,7 +208,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
         </div>
         
         <div className="flex justify-between items-end">
-            {/* Tab Navigation */}
             <div className="flex gap-2 border-b border-border/50">
                 {tabs.map(tab => (
                     <button
@@ -216,7 +228,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
                 ))}
             </div>
 
-            {/* Action Buttons */}
             <button 
                 onClick={() => loadContent(true)} 
                 disabled={loading}
@@ -237,8 +248,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
         ) : content ? (
             <div className="max-w-6xl mx-auto h-full pb-10">
                 <AnimatePresence mode="wait">
-                    
-                    {/* GUIDE TAB */}
                     {activeTab === 'guide' && (
                         <motion.div 
                             key="guide"
@@ -312,7 +321,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
                         </motion.div>
                     )}
 
-                    {/* DEEP DIVE TAB */}
                     {activeTab === 'deep_dive' && (
                         <motion.div
                             key="deep_dive"
@@ -324,7 +332,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
                         </motion.div>
                     )}
 
-                    {/* CODE LAB TAB */}
                     {activeTab === 'code' && (
                         <motion.div
                             key="code"
@@ -341,7 +348,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
                         </motion.div>
                     )}
 
-                    {/* QUIZ TAB */}
                     {activeTab === 'quiz' && (
                         <motion.div
                             key="quiz"
@@ -352,7 +358,6 @@ export const ContentArea: React.FC<ContentAreaProps> = ({ topic, onContentLoaded
                             <QuizModule questions={content.quiz} onRetry={() => setActiveTab('guide')} />
                         </motion.div>
                     )}
-
                 </AnimatePresence>
             </div>
         ) : null}
